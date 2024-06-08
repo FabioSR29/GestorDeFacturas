@@ -1,0 +1,43 @@
+.App{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.formulario{
+  background-color: rgb(255, 254, 254);
+  border-radius: 5px;
+  box-shadow: 9px 6px 26px -10px;
+  height: fit-content;
+  width: 500px;
+  margin: 200px;
+}
+h1{
+  margin-left: 10px;
+}
+.Ingresos{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 30px;
+
+}
+.Botones{
+  display: flex;
+  gap: 60px;
+  justify-content: center;
+  margin: 50px;
+}
+.btn1{
+  border: none;
+  border-radius: 10px;
+  background-color: rgb(3, 196, 3);
+  padding: 10px;
+  color: aliceblue;
+}
+.btn2{
+  border: none;
+  border-radius: 10px;
+  background-color: rgb(248, 20, 4);
+  padding: 10px;
+  color: aliceblue;
+}
