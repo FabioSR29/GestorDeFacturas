@@ -1,105 +1,201 @@
 
 import './App.css';
 import React, { useState } from 'react';
+import Logo from "../src/Logo.jpeg";
 
 function App() {
   const [formulario, setformulario] = useState(true);
   const [factura, setfactura] = useState(false);
-  const [producto, setproducto] = useState("");
-  const [nombre, setnombre] = useState("");
-  const [codigo, setcodigo] = useState("");
+  const [productoID, setProductoID] = useState(0);
+
+  const [Producto, setProducto] = useState("");
+  const [nombreCliente, setnombreCliente] = useState("");
   const [descripcion, setdescripcion] = useState("");
-  const [cantidad, setcantidad] = useState("");
-  const [Precio, setPrecio] = useState("");
-  const [Fecha, setfecha] = useState("");
-  const [Total, setTotal] = useState();
+  const [cantidad, setcantidad] = useState(0);
+  const [Precio, setPrecio] = useState(0);
+  const [FechaEntrada, setfechaEntrada] = useState("");
+  const [FechaSalida, setfechaSalida] = useState(new Date().toISOString().split('T')[0]);
+  const [Descuento, setDescuento] = useState(0);
+  const [Descuentos, setDescuentos] = useState(0);
+  const [Subtotal, setSubtotal] = useState(0);
+  const [Total, setTotal] = useState(0);
+
+  const [ListaProductos, setListaProductos] = useState([]);
 
   function CargarLosNuevosValoresDeProducto(event) {
-    setproducto(event.target.value);
-  }
-  function CargarLosNuevosValoresDeCodigo(event) {
-    setcodigo(event.target.value);
+    setProducto(event.target.value);
   }
   function CargarLosNuevosValoresDeDescripción(event) {
     setdescripcion(event.target.value);
   }
   function CargarLosNuevosValoresDeCantidad(event) {
-    setcantidad(event.target.value);
+    setcantidad(parseFloat(event.target.value)|| 0);
   }
   function CargarLosNuevosValoresDeNombre(event) {
-    setnombre(event.target.value);
+    setnombreCliente(event.target.value);
   }
   function CargarLosNuevosValoresDePrecio(event) {
-    setPrecio(event.target.value);
+    setPrecio(parseFloat(event.target.value)|| 0);
   }
-  function CargarLosNuevosValoresDeFecha(event) {
-    setfecha(event.target.value);
+  function CargarLosNuevosValoresDeFechaEntrada(event) {
+    setfechaEntrada(event.target.value);
+  }
+  function CargarLosNuevosValoresDeFechaSalida(event) {
+    setfechaSalida(event.target.value);
+  }
+  function CargarLosNuevosValoresDelDescuento(event) {
+    setDescuento(parseFloat(event.target.value)|| 0);
   }
 
-  function Limpiar() {
-    setfecha("");
-    setPrecio("");
-    setnombre("");
-    setcantidad("");
+
+
+
+  function AgregarProducto() {
+
+
+    var producto = {
+      productoID: productoID,
+      nombre: Producto,
+      descripcion: descripcion,
+      cantidad: cantidad,
+      precio: Precio,
+      Descuento: Descuento,
+      Total: (Precio * cantidad) - Descuento
+    }
+
+    ListaProductos.push(producto)
+
+    setPrecio(0);
+    setcantidad(0);
     setdescripcion("");
-    setcodigo("");
-    setproducto("");
+    setProducto("");
+    setDescuento(0);
+    setProductoID(ListaProductos.length)
+
+    console.log(ListaProductos)
+
+  }
+
+
+
+
+
+  function Limpiar() {
+    setfechaEntrada("");
+    setfechaSalida("");
+    setPrecio(0);
+    setnombreCliente("");
+    setcantidad(0);
+    setdescripcion("");
+    setProducto("");
   }
 
   function Imprimir() {
-    var resultado = cantidad*Precio;
-    setTotal(resultado);
-  setfactura(true)
-  setformulario(false)
+    var Descuentos=0;
+    var Subtotall=0;
+    var ttotal=0;
+
+    ListaProductos.forEach(element => {
+      Descuentos+=element.Descuento;
+      ttotal+=element.Total;
+      Subtotall+=element.precio;
+    });
+
+    setTotal(ttotal);
+    setSubtotal(Subtotall);
+    setDescuentos(Descuentos)
+    setfactura(true)
+    setformulario(false)
   }
 
   return (
     <div className="App">
 
       {formulario &&
-        <div className="formulario">
-          <h1>Ingrese los datos del Producto</h1>
-          <div className="Ingresos">
+        <div className='contenedor'>
+          <div className="formulario">
+            <h1>Ingrese los datos del Producto</h1>
 
-            <span><strong>Nombre producto o servicio:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDeProducto} value={producto} required></input>
-            <span><strong>Codigo:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDeCodigo} value={codigo} required></input>
-            <span><strong>Descripcion:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDeDescripción}  value={descripcion} required></input>
-            <span ><strong>Cantidad/horas:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad}  required></input>
-            <span><strong>Precio:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDePrecio} value={Precio}  required></input>
-            <span><strong>Nombre del cliente:</strong></span>
-            <input type='text' onChange={CargarLosNuevosValoresDeNombre}value={nombre} required></input>
-            <span><strong>Fecha:</strong></span>
-            <input type='date' onChange={CargarLosNuevosValoresDeFecha} value={Fecha} required></input>
+            <div className="Ingresos">
 
-            <div className="Botones">
-              <button className="btn1" onClick={Imprimir}>Imprimir</button>
-              <button className="btn2" onClick={Limpiar}>Limpiar</button>
+              <h2>Datos del cliente</h2>
+              <span><strong>Nombre del cliente:</strong></span>
+              <input type='text' onChange={CargarLosNuevosValoresDeNombre} value={nombreCliente} required></input>
+              <span><strong>Fecha Entrada:</strong></span>
+              <input type='date' onChange={CargarLosNuevosValoresDeFechaEntrada} value={FechaEntrada} required></input>
+              <span><strong>Fecha Salida:</strong></span>
+              <input type='date' onChange={CargarLosNuevosValoresDeFechaSalida} value={FechaSalida}></input>
+
+              <h2>Datos del producto</h2>
+              <button onClick={AgregarProducto}>Nuevo</button>
+              <span><strong>Nombre producto o servicio:</strong></span>
+              <input type='text' onChange={CargarLosNuevosValoresDeProducto} value={Producto} required></input>
+              <span><strong>Descripcion:</strong></span>
+              <input type='text' onChange={CargarLosNuevosValoresDeDescripción} value={descripcion} required></input>
+              <span ><strong>Cantidad/horas:</strong></span>
+              <input type='number' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad.toString()} required></input>
+              <span><strong>Precio:</strong></span>
+              <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={Precio.toString()} required></input>
+              <span><strong>Descuento:</strong></span>
+              <input type='number' onChange={CargarLosNuevosValoresDelDescuento} value={Descuento.toString()} ></input>
+
+              <div className="Botones">
+                <button className="btn1" onClick={Imprimir}>Imprimir</button>
+                <button className="btn2" onClick={Limpiar}>Limpiar</button>
+              </div>
+
             </div>
+
           </div>
-        </div>
+          <ul className='formulario'>
+            {ListaProductos.map(product => (
+
+              <li className='' key={product.productoID}>{product.nombre}
+
+                <button onClick={() => {
+                  setListaProductos(
+                    ListaProductos.filter(p =>
+                      p.productoID !== product.productoID
+                    )
+                  );
+                }} >Eliminar
+                </button>
+
+              </li>
+            ))}
+          </ul>
+        </div >
       }
 
-      {factura &&
+      {
+        factura &&
 
         <div className='factura'>
-          <h1>EL TAMARINDO 2</h1>
+          <img src={Logo}></img>
+          <h1>Multiservicios</h1>
+          <h1>El tamarindo #2</h1>
+
           <div className='IngresosFT'>
-            <span><strong>Producto o servicio: </strong>{producto}</span>
-            <span><strong>Codigo:</strong>{codigo}</span>
-            <span><strong>Descripcion: </strong>{descripcion}</span>
-            <span><strong>Cantidad/horas: </strong>{cantidad}</span>
-            <span><strong>Precio: </strong>{Precio}</span>
-            <span><strong>Cliente: </strong>{nombre}</span>
-            <span><strong>Fecha: </strong>{Fecha}</span>
-            <span><strong>Total de venta:   </strong>{Total} colones</span>
+            <span><strong>Cliente: </strong>{nombreCliente}</span>
+            <span><strong>Producto/servicio:</strong></span>
+            <div className='Lista'>
+              {ListaProductos.map(product => (
+
+                <div className='ListaContenido' key={product.productoID}>
+                  <div >-{product.nombre} </div>
+                  <div>{product.precio} </div>
+                </div>
+              ))}
+            </div>
+            <span>Descuentos:{Descuentos}</span>
+            <span>Subtotal:{Subtotal}</span>
+            <span>Total:{Total}</span>
             <span> </span>
+            <span><strong>Fecha de Entrada: </strong>{FechaEntrada}</span>
+            <span><strong>Fecha de Salida: </strong>{FechaSalida}</span>
             <span>Gracias por hacer uso de nuestros servicios</span>
-            <span>Telefono: 25285404</span>
+            <span>Telefono: 2470 23-23</span>
+            <span>multiserviciostamarindo02@gmail.com</span>
           </div>
 
         </div>
@@ -108,7 +204,7 @@ function App() {
 
 
 
-    </div>
+    </div >
   );
 }
 

@@ -1,58 +1,86 @@
-.App{
+.App {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.formulario{
+
+.contenedor {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.formulario {
   background-color: rgb(255, 254, 254);
   border-radius: 5px;
   box-shadow: 9px 6px 26px -10px;
   height: fit-content;
-  width: 500px;
-  margin: 200px;
 }
-h1{
+
+h1 {
   margin-left: 10px;
 }
-.Ingresos{
+
+.Ingresos {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin: 30px;
 
 }
-.Botones{
+
+.Botones {
   display: flex;
   gap: 60px;
   justify-content: center;
   margin: 50px;
 }
-.btn1{
+
+.btn1 {
   border: none;
   border-radius: 10px;
   background-color: rgb(3, 196, 3);
   padding: 10px;
   color: aliceblue;
 }
-.btn2{
+
+.btn2 {
   border: none;
   border-radius: 10px;
   background-color: rgb(248, 20, 4);
   padding: 10px;
   color: aliceblue;
 }
-.factura h1{
+
+.factura h1 {
   font-size: small;
   margin-left: 10px;
 }
-.IngresosFT{
+
+.IngresosFT {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 30px;
-  margin-left:5px;
+  margin-left: 5px;
 
 }
-.IngresosFT SPAN{
-  font-size:xx-small;
+
+.IngresosFT SPAN {
+  font-size: xx-small;
+}
+.Lista{
+  display: flex;
+  flex-direction: column;
+  font-size: xx-small;
+}
+.ListaContenido{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+img{
+  height: 110PX;
 }
