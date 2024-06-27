@@ -29,13 +29,13 @@ function App() {
     setdescripcion(event.target.value);
   }
   function CargarLosNuevosValoresDeCantidad(event) {
-    setcantidad(parseFloat(event.target.value)|| 0);
+    setcantidad(parseFloat(event.target.value) || 0);
   }
   function CargarLosNuevosValoresDeNombre(event) {
     setnombreCliente(event.target.value);
   }
   function CargarLosNuevosValoresDePrecio(event) {
-    setPrecio(parseFloat(event.target.value)|| 0);
+    setPrecio(parseFloat(event.target.value) || 0);
   }
   function CargarLosNuevosValoresDeFechaEntrada(event) {
     setfechaEntrada(event.target.value);
@@ -44,7 +44,7 @@ function App() {
     setfechaSalida(event.target.value);
   }
   function CargarLosNuevosValoresDelDescuento(event) {
-    setDescuento(parseFloat(event.target.value)|| 0);
+    setDescuento(parseFloat(event.target.value) || 0);
   }
 
 
@@ -76,10 +76,6 @@ function App() {
 
   }
 
-
-
-
-
   function Limpiar() {
     setfechaEntrada("");
     setfechaSalida("");
@@ -88,24 +84,31 @@ function App() {
     setcantidad(0);
     setdescripcion("");
     setProducto("");
+
+    setListaProductos([])
   }
 
   function Imprimir() {
-    var Descuentos=0;
-    var Subtotall=0;
-    var ttotal=0;
+    if (ListaProductos.length == 0) {
+      alert("Debe agregar al menos un producto a la lista")
+    } else {
+      var Descuentos = 0;
+      var Subtotall = 0;
+      var ttotal = 0;
 
-    ListaProductos.forEach(element => {
-      Descuentos+=element.Descuento;
-      ttotal+=element.Total;
-      Subtotall+=element.precio;
-    });
+      ListaProductos.forEach(element => {
+        Descuentos += element.Descuento;
+        ttotal += element.Total;
+        Subtotall += element.precio;
+      });
 
-    setTotal(ttotal);
-    setSubtotal(Subtotall);
-    setDescuentos(Descuentos)
-    setfactura(true)
-    setformulario(false)
+      setTotal(ttotal);
+      setSubtotal(Subtotall);
+      setDescuentos(Descuentos)
+      setfactura(true)
+      setformulario(false)
+    }
+
   }
 
   return (
@@ -127,7 +130,7 @@ function App() {
               <input type='date' onChange={CargarLosNuevosValoresDeFechaSalida} value={FechaSalida}></input>
 
               <h2>Datos del producto</h2>
-              <button onClick={AgregarProducto}>Nuevo</button>
+
               <span><strong>Nombre producto o servicio:</strong></span>
               <input type='text' onChange={CargarLosNuevosValoresDeProducto} value={Producto} required></input>
               <span><strong>Descripcion:</strong></span>
@@ -138,8 +141,9 @@ function App() {
               <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={Precio.toString()} required></input>
               <span><strong>Descuento:</strong></span>
               <input type='number' onChange={CargarLosNuevosValoresDelDescuento} value={Descuento.toString()} ></input>
-
+              <button onClick={AgregarProducto} className='btnAgregar'>+ Nuevo</button>
               <div className="Botones">
+
                 <button className="btn1" onClick={Imprimir}>Imprimir</button>
                 <button className="btn2" onClick={Limpiar}>Limpiar</button>
               </div>
@@ -152,7 +156,7 @@ function App() {
 
               <li className='' key={product.productoID}>{product.nombre}
 
-                <button onClick={() => {
+                <button className='btnB' onClick={() => {
                   setListaProductos(
                     ListaProductos.filter(p =>
                       p.productoID !== product.productoID
@@ -182,8 +186,15 @@ function App() {
               {ListaProductos.map(product => (
 
                 <div className='ListaContenido' key={product.productoID}>
-                  <div >-{product.nombre} </div>
+                  <div >
+                    <div> -{product.nombre}  </div>
+
+                      <span>Cantidad:{product.cantidad}</span>
+                    
+
+                  </div>
                   <div>{product.precio} </div>
+
                 </div>
               ))}
             </div>
