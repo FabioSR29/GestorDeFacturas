@@ -1,7 +1,7 @@
 import { useState } from "react";
 import React from "react";
-import Login from './Componentes/Home';
-import Home from './Componentes/Login';
+import Home from './Componentes/Home';
+import Login from './Componentes/Login';
 
 import appFirebase from "./Credenciales";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -9,15 +9,17 @@ const auth = getAuth(appFirebase);
 
 
 function App() {
-    const [usuario, setUsuario] = useState(null);
+    const [usuario, setUsuario] = useState(true);
 
-    onAuthStateChanged(auth, (usuarioFirebase) => {
-        if (usuarioFirebase) {
-            setUsuario(usuarioFirebase)
-        } else {
-            setUsuario(null)
-        }
-    })
+        onAuthStateChanged(auth, (usuarioFirebase) => {
+            if (usuarioFirebase) {
+                setUsuario(usuarioFirebase)
+                console.log(usuarioFirebase)
+            } else {
+                setUsuario(null)
+                console.log(usuarioFirebase)
+            }
+        })
 
 
     return (

@@ -2,7 +2,7 @@
 import '../App.css';
 import { useState } from 'react';
 import Logo from "../Assets/Logo.jpeg";
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 function IngresoDeFacturas() {
   const [formulario, setformulario] = useState(true);
   const [factura, setfactura] = useState(false);
@@ -18,7 +18,7 @@ function IngresoDeFacturas() {
   const [Descuentos, setDescuentos] = useState(0);
   const [Subtotal, setSubtotal] = useState(0);
   const [Total, setTotal] = useState(0);
-
+  const Swal = require('sweetalert2')
   const [ListaProductos, setListaProductos] = useState([]);
 
   function CargarLosNuevosValoresDeProducto(event) {
@@ -89,7 +89,11 @@ function IngresoDeFacturas() {
 
   function Imprimir() {
     if (ListaProductos.length == 0) {
-      alert("Debe agregar al menos un producto a la lista")
+      Swal.fire({
+        icon: "warning",
+        title: "Revisa los datos",
+        text: "Debe agregar al menos un producto a la lista"
+      });
     } else {
       var Descuentos = 0;
       var Subtotall = 0;
@@ -174,6 +178,7 @@ function IngresoDeFacturas() {
         factura &&
 
         <div className='factura'>
+                <span className='parche'></span>
           <img src={Logo}></img>
           <h1>Multiservicios</h1>
           <h1>El tamarindo #2</h1>
@@ -207,6 +212,8 @@ function IngresoDeFacturas() {
             <span>Telefono: 2470 23-23</span>
             <span>multiserviciostamarindo02@gmail.com</span>
           </div>
+
+    
 
         </div>
 

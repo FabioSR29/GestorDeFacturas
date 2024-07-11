@@ -1,8 +1,9 @@
 import { useState } from "react";
 import React from "react";
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 import appFirebase from "../Credenciales";
-import { getAut, createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
 const auth = getAuth(appFirebase);
 
 function Login() {
@@ -12,11 +13,38 @@ function Login() {
         e.preventDefault();
         const correo=e.target.Email.value;
         const  contraseña = e.target.Contraseña.value;
-
+        const Swal = require('sweetalert2')
         if (resgistrado) {
-            await createUserWithEmailAndPassword(auth,correo,contraseña);
+            try {
+                await createUserWithEmailAndPassword(auth,correo,contraseña); 
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Usuario creado",
+                    showConfirmButton: false,
+                    timer: 1500
+                  }); 
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Asegurate de que la contraseña sea fuerte.",
+                    footer: "Detalles del error:"+error
+                  });
+            }
+           
         }else{
-            await signInWithEmailAndPassword(auth,correo,contraseña);
+            try {
+                await signInWithEmailAndPassword(auth,correo,contraseña); 
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error...",
+                    text: "Realmente estas registrado?",
+                    footer: error
+                  });
+            }
+           
         }
     }
 

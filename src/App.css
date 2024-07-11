@@ -104,3 +104,12 @@ img{
 .btnB:hover , .btn2:hover , .btnAgregar:hover,.btn1:hover{
   border: 1px solid black;
 }
+
+.parche{
+  background-color: white;
+  position: absolute;
+  width: 94%;
+  height: 125px;
+  left: 10px;
+  top: 1px;
+}
