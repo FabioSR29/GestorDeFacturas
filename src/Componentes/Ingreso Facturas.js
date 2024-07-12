@@ -2,7 +2,7 @@
 import '../App.css';
 import { useState } from 'react';
 import Logo from "../Assets/Logo.jpeg";
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+
 function IngresoDeFacturas() {
   const [formulario, setformulario] = useState(true);
   const [factura, setfactura] = useState(false);
