@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import appFirebase from '../Credenciales'
 import { getAuth } from "firebase/auth";
@@ -20,26 +20,67 @@ function Productos() {
         fecha: ''
     }
 
-    const [User, setUser] = useState(valorInicial)
+    const [Producto, setProducto] = useState(valorInicial)
+    const [Lista, setLista] = useState([]);
+    const [IdGuia, setIdGuia] = useState("");
 
     const capturarInputs = (e) => {
         const { name, value } = e.target;
-        setUser({ ...User, [name]: value })
+        setProducto({ ...Producto, [name]: value })
     }
 
     const guardarDatos = async (e) => {
         e.preventDefault();
-        try {
-            
-            await addDoc(collection(db, 'Productos'),{ ...User })
+        if (IdGuia === '') {
+            try {
 
-        } catch (error) {
+                await addDoc(collection(db, 'Productos'), { ...Producto })
+
+            } catch (error) {
                 console.log(error)
+            }
+        } else {
+            await setDoc(doc(db, "Productos", IdGuia), {
+                ...Producto
+            })
         }
-        setUser(valorInicial)
+
+        setProducto(valorInicial)
+        setIdGuia('')
     }
 
 
+    useEffect(() => {
+        const getLista = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'Productos'))
+                const docs = []
+                querySnapshot.forEach((doc) => {
+                    docs.push({ ...doc.data(), id: doc.id })
+                })
+                setLista(docs);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getLista()
+    }, [Lista])
+
+    const DeleteProduct = async (id) => {
+        console.log(id)
+        await deleteDoc(doc(db, "Productos", id))
+    }
+    const ObtengaElproducto = async (id) => {
+        const docRef = doc(db, "Productos", id)
+        const docsnap = await getDoc(docRef)
+        setProducto(docsnap.data())
+    }
+
+    useEffect(() => {
+        if (IdGuia !== '') {
+            ObtengaElproducto(IdGuia);
+        }
+    }, [IdGuia])
     return (
 
 
@@ -49,20 +90,40 @@ function Productos() {
                 <form onSubmit={guardarDatos}>
                     <div className="card card-body">
                         <div className="form-group">
-                            <input type="text" name="Nombre" className="form-control mb-3" placeholder="Ingrese el nombre del producto" onChange={capturarInputs} value={User.Nombre}></input>
-                            <input type="text" name="descripcion" className="form-control mb-3" placeholder="Ingrese una descripción" onChange={capturarInputs} value={User.descripcion}></input>
-                            <input type="text" name="codigo" className="form-control mb-3" placeholder="Ingrese el codigo" onChange={capturarInputs} value={User.codigo}></input>
-                            <input type="number" name="precio" className="form-control mb-3" placeholder="Ingrese el precio" onChange={capturarInputs} value={User.precio}></input>
-                            <input type="number" name="cantidad" className="form-control mb-3" placeholder="Ingrese la cantidad" onChange={capturarInputs} value={User.cantidad}></input>
-                            <input type="date" name="fecha" className="form-control mb-3" placeholder="Ingrese la fecha de la compra" onChange={capturarInputs} value={User.fecha}></input>
+                            <input type="text" name="Nombre" className="form-control mb-3" placeholder="Ingrese el nombre del producto" onChange={capturarInputs} value={Producto.Nombre}></input>
+                            <input type="text" name="descripcion" className="form-control mb-3" placeholder="Ingrese una descripción" onChange={capturarInputs} value={Producto.descripcion}></input>
+                            <input type="text" name="codigo" className="form-control mb-3" placeholder="Ingrese el codigo" onChange={capturarInputs} value={Producto.codigo}></input>
+                            <input type="number" name="precio" className="form-control mb-3" placeholder="Ingrese el precio" onChange={capturarInputs} value={Producto.precio}></input>
+                            <input type="number" name="cantidad" className="form-control mb-3" placeholder="Ingrese la cantidad" onChange={capturarInputs} value={Producto.cantidad}></input>
+                            <input type="date" name="fecha" className="form-control mb-3" placeholder="Ingrese la fecha de la compra" onChange={capturarInputs} value={Producto.fecha}></input>
                         </div>
-                        <button className="btn btn-primary">Guardar</button>
+                        <button className="btn btn-primary">{IdGuia === '' ? 'Guardar' : 'Actualizar'}</button>
                     </div>
                 </form>
             </div>
 
             <div className="col-md-8">
                 <h1 className="text-center">Lista de productos</h1>
+
+
+                <div className="container card">
+                    <div className="card-body">
+                        {Lista.map((list) => (
+                            <div key={list.id}>
+                                <p>Nombre: {list.Nombre}</p>
+                                <p>Descripcion: {list.descripcion}</p>
+                                <p>Codigo: {list.codigo}</p>
+                                <p>Precio: {list.precio}</p>
+                                <p>Cantidad: {list.cantidad}</p>
+                                <p>Fecha de ingreso: {list.fecha}</p>
+
+                                <button className="btn btn-danger" onClick={() => DeleteProduct(list.id)}>Eliminar</button>
+                                <button className="btn btn-success m-2" onClick={() => setIdGuia(list.id)}>Actualizar</button>
+                                <hr></hr>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
             </div>
 
