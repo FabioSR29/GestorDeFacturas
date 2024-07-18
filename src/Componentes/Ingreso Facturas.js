@@ -1,9 +1,54 @@
 
 import '../App.css';
-import { useState } from 'react';
-import Logo from "../Assets/Logo.jpeg";
+import { useEffect, useState } from 'react';
+import appFirebase from '../Credenciales'
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc, getDoc, doc, deleteDoc, getDocs, setDoc } from "firebase/firestore";
+
+
+const auth = getAuth(appFirebase)
+const db = getFirestore(appFirebase)
 
 function IngresoDeFacturas() {
+
+  const [Productos, setProductos] = useState([]);
+  const [Servicios, setServicios] = useState([]);
+  const [seleccion, setSeleccion] = useState('')
+  useEffect(() => {
+    const getLista = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Productos'))
+        const docs = []
+        querySnapshot.forEach((doc) => {
+          docs.push({ ...doc.data(), id: doc.id })
+        })
+        setProductos(docs);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getLista()
+  }, [Productos])
+  useEffect(() => {
+    const getLista = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Servicios'))
+        const docs = []
+        querySnapshot.forEach((doc) => {
+          docs.push({ ...doc.data(), id: doc.id })
+        })
+        setServicios(docs);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getLista()
+  }, [Servicios])
+
+  const TipoSeleccionado = (event) => {
+    setSeleccion(event.target.value)
+  };
+
   const [formulario, setformulario] = useState(true);
   const [factura, setfactura] = useState(false);
   const [productoID, setProductoID] = useState(0);
@@ -134,12 +179,47 @@ function IngresoDeFacturas() {
 
               <h2>Datos del producto</h2>
 
+              <span><strong>¿Producto o servicio?</strong></span>
+              <div>
+                <input className="m-3" type="radio" id="producto" name="tipo" value="producto" checked={seleccion === 'producto'} onChange={TipoSeleccionado} />
+                <label htmlFor="producto">Producto</label>
+                <input className="m-3" type="radio" id="servicio" name="tipo" value="servicio" checked={seleccion === 'servicio'} onChange={TipoSeleccionado} />
+                <label htmlFor="servicio">Servicio</label>
+              </div>
+
+
               <span><strong>Nombre producto o servicio:</strong></span>
-              <input type='text' onChange={CargarLosNuevosValoresDeProducto} value={Producto} required></input>
+              {seleccion === 'producto' ?
+                <select>
+                  {Productos.map((list) => (
+                    <option key={list.id}>{list.Nombre}</option>
+                  ))}
+
+                </select>
+                :
+                <select>
+                  {Servicios.map((list) => (
+                    <option key={list.id}>{list.Nombre}</option>
+                  ))}
+
+                </select>
+              }
+
+
+
               <span><strong>Descripcion:</strong></span>
               <input type='text' onChange={CargarLosNuevosValoresDeDescripción} value={descripcion} required></input>
-              <span ><strong>Cantidad/horas:</strong></span>
-              <input type='number' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad.toString()} required></input>
+              {seleccion === 'producto' ?
+              <div >
+                   <span ><strong>Cantidad:</strong></span>
+                   <input type='number' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad.toString()} required></input>
+              </div>
+           
+              :
+             <div></div>
+              }
+
+
               <span><strong>Precio:</strong></span>
               <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={Precio.toString()} required></input>
               <span><strong>Descuento:</strong></span>
@@ -174,50 +254,7 @@ function IngresoDeFacturas() {
         </div >
       }
 
-      {
-        factura &&
 
-        <div className='factura'>
-                <span className='parche'></span>
-          <img src={Logo}></img>
-          <h1>Multiservicios</h1>
-          <h1>El tamarindo #2</h1>
-
-          <div className='IngresosFT'>
-            <span><strong>Cliente: </strong>{nombreCliente}</span>
-            <span><strong>Producto/servicio:</strong></span>
-            <div className='Lista'>
-              {ListaProductos.map(product => (
-
-                <div className='ListaContenido' key={product.productoID}>
-                  <div >
-                    <div> -{product.nombre}  </div>
-
-                      <span>Cantidad:{product.cantidad}</span>
-                    
-
-                  </div>
-                  <div>{product.precio} </div>
-
-                </div>
-              ))}
-            </div>
-            <span>Descuentos:{Descuentos}</span>
-            <span>Subtotal:{Subtotal}</span>
-            <span>Total:{Total}</span>
-            <span> </span>
-            <span><strong>Fecha de Entrada: </strong>{FechaEntrada}</span>
-            <span><strong>Fecha de Salida: </strong>{FechaSalida}</span>
-            <span>Gracias por hacer uso de nuestros servicios</span>
-            <span>Telefono: 2470 23-23</span>
-            <span>multiserviciostamarindo02@gmail.com</span>
-          </div>
-
-    
-
-        </div>
-
-      }
 
 
 
