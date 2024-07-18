@@ -4,7 +4,7 @@ import Logo from "../Assets/Logo.jpeg";
 import '../App.css';
 
 
-function MostrarFactura() {
+function MostrarFactura({Elemento}) {
 
     return (
         <div className='factura'>
@@ -14,10 +14,10 @@ function MostrarFactura() {
             <h1>El tamarindo #2</h1>
 
             <div className='IngresosFT'>
-                <span><strong>Cliente: </strong>{nombreCliente}</span>
+                <span><strong>Cliente: </strong>{Elemento.nombreCliente}</span>
                 <span><strong>Producto/servicio:</strong></span>
                 <div className='Lista'>
-                    {ListaProductos.map(product => (
+                    {Elemento.ListaProductos.map(product => (
 
                         <div className='ListaContenido' key={product.productoID}>
                             <div >
@@ -32,12 +32,12 @@ function MostrarFactura() {
                         </div>
                     ))}
                 </div>
-                <span>Descuentos:{Descuentos}</span>
-                <span>Subtotal:{Subtotal}</span>
-                <span>Total:{Total}</span>
+                <span>Descuentos:{Elemento.Descuentos}</span>
+                <span>Subtotal:{Elemento.Subtotal}</span>
+                <span>Total:{Elemento.Total}</span>
                 <span> </span>
-                <span><strong>Fecha de Entrada: </strong>{FechaEntrada}</span>
-                <span><strong>Fecha de Salida: </strong>{FechaSalida}</span>
+                <span><strong>Fecha de Entrada: </strong>{Elemento.FechaEntrada}</span>
+                <span><strong>Fecha de Salida: </strong>{Elemento.FechaSalida}</span>
                 <span>Gracias por hacer uso de nuestros servicios</span>
                 <span>Telefono: 2470 23-23</span>
                 <span>multiserviciostamarindo02@gmail.com</span>

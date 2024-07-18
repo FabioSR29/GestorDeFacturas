@@ -10,7 +10,7 @@ const auth = getAuth(appFirebase);
 
 function Home({ correoUsuario }) {
 
-    const [EstadoFacturas, setEstadoFacturas] = useState(false);
+    const [EstadoFacturas, setEstadoFacturas] = useState(true);
     const [EstadoProductos, setEstadoProductos] = useState(false);
     const [EstadoServicios, setEstadoServicios] = useState(false);
     const [activeTab, setActiveTab] = useState('Imprimir Facturas');

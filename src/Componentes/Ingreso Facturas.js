@@ -10,10 +10,16 @@ const auth = getAuth(appFirebase)
 const db = getFirestore(appFirebase)
 
 function IngresoDeFacturas() {
-
+  const valorInicial = {
+    Nombre: '',
+    Descripcion: '',
+    cantidad: '',
+    precio: '',
+  }
   const [Productos, setProductos] = useState([]);
   const [Servicios, setServicios] = useState([]);
-  const [seleccion, setSeleccion] = useState('')
+  const [seleccion, setSeleccion] = useState('');
+  const [ElementoSeleccionado, setElementoSelecionado] = useState(valorInicial);
   useEffect(() => {
     const getLista = async () => {
       try {
@@ -48,6 +54,27 @@ function IngresoDeFacturas() {
   const TipoSeleccionado = (event) => {
     setSeleccion(event.target.value)
   };
+
+
+
+
+
+
+  const AutoCompletarSeleccion = (event) => {
+    const nombre = event.target.value;
+    let seleccionado;
+    if (seleccion === 'producto') {
+      seleccionado = Productos.find((p) => p.Nombre === nombre);
+      setElementoSelecionado(seleccionado)
+      console.log(ElementoSeleccionado)
+    } else {
+      seleccionado = Servicios.find((s) => s.Nombre === nombre);
+      setElementoSelecionado(seleccionado)
+      console.log(ElementoSeleccionado)
+    }
+
+
+  }
 
   const [formulario, setformulario] = useState(true);
   const [factura, setfactura] = useState(false);
@@ -190,14 +217,16 @@ function IngresoDeFacturas() {
 
               <span><strong>Nombre producto o servicio:</strong></span>
               {seleccion === 'producto' ?
-                <select>
+                <select onChange={AutoCompletarSeleccion}>
+                  <option >selecciona una opción</option>
                   {Productos.map((list) => (
                     <option key={list.id}>{list.Nombre}</option>
                   ))}
 
                 </select>
                 :
-                <select>
+                <select onChange={AutoCompletarSeleccion}>
+                  <option >selecciona una opción</option>
                   {Servicios.map((list) => (
                     <option key={list.id}>{list.Nombre}</option>
                   ))}
@@ -208,20 +237,22 @@ function IngresoDeFacturas() {
 
 
               <span><strong>Descripcion:</strong></span>
-              <input type='text' onChange={CargarLosNuevosValoresDeDescripción} value={descripcion} required></input>
+              <input type='text'  onChange={AutoCompletarSeleccion}value={ElementoSeleccionado.Descripcion} required></input>
+              <span><strong>Precio:</strong></span>
+              <input type='number'  onChange={CargarLosNuevosValoresDePrecio} value={ElementoSeleccionado.precio} required></input>
+
               {seleccion === 'producto' ?
-              <div >
-                   <span ><strong>Cantidad:</strong></span>
-                   <input type='number' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad.toString()} required></input>
-              </div>
-           
-              :
-             <div></div>
+                <div >
+                  <span ><strong>Cantidad:</strong></span>
+                  <input type='number' onChange={CargarLosNuevosValoresDeCantidad} value={cantidad.toString()} required></input>
+                </div>
+
+                :
+                <div></div>
               }
 
 
-              <span><strong>Precio:</strong></span>
-              <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={Precio.toString()} required></input>
+            
               <span><strong>Descuento:</strong></span>
               <input type='number' onChange={CargarLosNuevosValoresDelDescuento} value={Descuento.toString()} ></input>
               <button onClick={AgregarProducto} className='btnAgregar'>+ Nuevo</button>
