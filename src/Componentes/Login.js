@@ -55,7 +55,7 @@ function Login() {
         <div className="login-container container vh-100 d-flex justify-content-center align-items-center">
             <div className="card w-100 shadow border-0">
                 <div className="row">
-                    <div className="col-md-12 p-4">
+                    <div className="col-md-12 p-5">
                         <h1 className="text-center">{resgistrado ? "Registrate" : "Inicia sesión"}</h1>
                         <form className="mt-4" onSubmit={handleSubmit}>
                             <div className="mb-3">
