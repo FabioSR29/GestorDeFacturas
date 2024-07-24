@@ -10,16 +10,21 @@ const auth = getAuth(appFirebase)
 const db = getFirestore(appFirebase)
 
 function IngresoDeFacturas() {
+
   const valorInicial = {
+    ID: '',
     Nombre: '',
-    Descripcion: '',
+    descripcion: '',
     cantidad: '',
     precio: '',
+    Descuento: ''
   }
   const [Productos, setProductos] = useState([]);
   const [Servicios, setServicios] = useState([]);
   const [seleccion, setSeleccion] = useState('');
   const [ElementoSeleccionado, setElementoSelecionado] = useState(valorInicial);
+  const [ListaArticulos, setListaArticulos] = useState([]);
+
   useEffect(() => {
     const getLista = async () => {
       try {
@@ -35,6 +40,7 @@ function IngresoDeFacturas() {
     }
     getLista()
   }, [Productos])
+
   useEffect(() => {
     const getLista = async () => {
       try {
@@ -56,24 +62,27 @@ function IngresoDeFacturas() {
   };
 
 
-
-
-
-
   const AutoCompletarSeleccion = (event) => {
     const nombre = event.target.value;
     let seleccionado;
-    if (seleccion === 'producto') {
-      seleccionado = Productos.find((p) => p.Nombre === nombre);
-      setElementoSelecionado(seleccionado)
-      console.log(ElementoSeleccionado)
+    if (nombre === 'selecciona una opción') {
+      setElementoSelecionado(valorInicial)
     } else {
-      seleccionado = Servicios.find((s) => s.Nombre === nombre);
-      setElementoSelecionado(seleccionado)
-      console.log(ElementoSeleccionado)
+      if (seleccion === 'producto') {
+        seleccionado = Productos.find((p) => p.Nombre === nombre);
+        setElementoSelecionado(seleccionado)
+      } else {
+        seleccionado = Servicios.find((s) => s.Nombre === nombre);
+        setElementoSelecionado(seleccionado)
+      }
     }
+  }
 
 
+  const AgregarArticulos = () => {
+    ListaArticulos.push(ElementoSeleccionado)
+    setElementoSelecionado(valorInicial)
+    console.log(ListaArticulos)
   }
 
   const [formulario, setformulario] = useState(true);
@@ -93,12 +102,7 @@ function IngresoDeFacturas() {
   const Swal = require('sweetalert2')
   const [ListaProductos, setListaProductos] = useState([]);
 
-  function CargarLosNuevosValoresDeProducto(event) {
-    setProducto(event.target.value);
-  }
-  function CargarLosNuevosValoresDeDescripción(event) {
-    setdescripcion(event.target.value);
-  }
+
   function CargarLosNuevosValoresDeCantidad(event) {
     setcantidad(parseFloat(event.target.value) || 0);
   }
@@ -121,42 +125,14 @@ function IngresoDeFacturas() {
 
 
 
-  function AgregarProducto() {
 
-
-    var producto = {
-      productoID: productoID,
-      nombre: Producto,
-      descripcion: descripcion,
-      cantidad: cantidad,
-      precio: Precio,
-      Descuento: Descuento,
-      Total: (Precio * cantidad) - Descuento
-    }
-
-    ListaProductos.push(producto)
-
-    setPrecio(0);
-    setcantidad(0);
-    setdescripcion("");
-    setProducto("");
-    setDescuento(0);
-    setProductoID(ListaProductos.length)
-
-    console.log(ListaProductos)
-
-  }
 
   function Limpiar() {
     setfechaEntrada("");
     setfechaSalida("");
-    setPrecio(0);
     setnombreCliente("");
-    setcantidad(0);
-    setdescripcion("");
-    setProducto("");
+    setElementoSelecionado(valorInicial)
 
-    setListaProductos([])
   }
 
   function Imprimir() {
@@ -237,9 +213,9 @@ function IngresoDeFacturas() {
 
 
               <span><strong>Descripcion:</strong></span>
-              <input type='text'  onChange={AutoCompletarSeleccion}value={ElementoSeleccionado.Descripcion} required></input>
+              <input type='text' onChange={AutoCompletarSeleccion} value={ElementoSeleccionado.descripcion} required></input>
               <span><strong>Precio:</strong></span>
-              <input type='number'  onChange={CargarLosNuevosValoresDePrecio} value={ElementoSeleccionado.precio} required></input>
+              <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={ElementoSeleccionado.precio} required></input>
 
               {seleccion === 'producto' ?
                 <div >
@@ -252,10 +228,10 @@ function IngresoDeFacturas() {
               }
 
 
-            
+
               <span><strong>Descuento:</strong></span>
               <input type='number' onChange={CargarLosNuevosValoresDelDescuento} value={Descuento.toString()} ></input>
-              <button onClick={AgregarProducto} className='btnAgregar'>+ Nuevo</button>
+              <button onClick={AgregarArticulos} className='btnAgregar'>+ Nuevo</button>
               <div className="Botones">
 
                 <button className="btn1" onClick={Imprimir}>Imprimir</button>
@@ -266,14 +242,14 @@ function IngresoDeFacturas() {
 
           </div>
           <ul className='formulario'>
-            {ListaProductos.map(product => (
+            {ListaArticulos.map(product => (
 
-              <li className='' key={product.productoID}>{product.nombre}
+              <li className='' key={product.id}>{product.Nombre}
 
                 <button className='btnB' onClick={() => {
-                  setListaProductos(
-                    ListaProductos.filter(p =>
-                      p.productoID !== product.productoID
+                  setListaArticulos(
+                    ListaArticulos.filter(p =>
+                      p.id !== product.id
                     )
                   );
                 }} >Eliminar

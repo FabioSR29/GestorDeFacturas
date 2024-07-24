@@ -67,7 +67,7 @@ function Login() {
                             </div>
                             <div className="mb-3">
                                 <div className="input-group">
-                                    <span class="input-group-text material-icons">password</span>
+                                    <span className="input-group-text material-icons">password</span>
                                     <input type="password" className="form-control" id="Contraseña" required placeholder="Contraseña" />
                                 </div>
                             </div>
