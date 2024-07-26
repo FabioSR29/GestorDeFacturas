@@ -1,5 +1,3 @@
-
-import { useState } from 'react';
 import Logo from "../Assets/Logo.jpeg";
 import '../App.css';
 

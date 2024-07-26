@@ -12,18 +12,21 @@ const db = getFirestore(appFirebase)
 function IngresoDeFacturas() {
 
   const valorInicial = {
-    ID: '',
+    id: '',
     Nombre: '',
     descripcion: '',
     cantidad: '',
     precio: '',
     Descuento: ''
   }
+  const Swal = require('sweetalert2')
   const [Productos, setProductos] = useState([]);
   const [Servicios, setServicios] = useState([]);
   const [seleccion, setSeleccion] = useState('');
   const [ElementoSeleccionado, setElementoSelecionado] = useState(valorInicial);
   const [ListaArticulos, setListaArticulos] = useState([]);
+  const [cantidad, setcantidad] = useState(0);
+  const [Descuento, setDescuento] = useState(0);
 
   useEffect(() => {
     const getLista = async () => {
@@ -70,42 +73,109 @@ function IngresoDeFacturas() {
     } else {
       if (seleccion === 'producto') {
         seleccionado = Productos.find((p) => p.Nombre === nombre);
-        setElementoSelecionado(seleccionado)
+        setElementoSelecionado({
+          ...valorInicial,
+          ...seleccionadoFiltrado(seleccionado)
+        });
+        console.log(ElementoSeleccionado)
       } else {
         seleccionado = Servicios.find((s) => s.Nombre === nombre);
-        setElementoSelecionado(seleccionado)
+        setElementoSelecionado({
+          ...valorInicial,
+          ...seleccionadoFiltrado(seleccionado)
+        });
       }
+
     }
   }
 
+  const seleccionadoFiltrado =(seleccionado)=> Object.keys(valorInicial).reduce((obj, key) => {
+    if (seleccionado.hasOwnProperty(key)) {
+      obj[key] = seleccionado[key];
+    }
+    return obj;
+  }, {});
 
   const AgregarArticulos = () => {
-    ListaArticulos.push(ElementoSeleccionado)
-    setElementoSelecionado(valorInicial)
-    console.log(ListaArticulos)
+    Swal.fire({
+      title: "¿Agregar?",
+      showDenyButton: true,
+      confirmButtonText: "Agregar",
+      denyButtonText: `cancelar`
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Se agregó a la lista",
+          showConfirmButton: false,
+          timer: 1000
+        });
+        ElementoSeleccionado.cantidad = cantidad;
+        ElementoSeleccionado.Descuento=Descuento;
+        ListaArticulos.push(ElementoSeleccionado)
+        setElementoSelecionado(valorInicial)
+        Limpiar()
+      } else if (result.isDenied) {
+        Swal.fire("Revisa los datos", "", "info");
+      }
+    });
+   
+  
+  }
+  function EliminarDeLista(product){
+    Swal.fire({
+      title: "¿Seguro?",
+      showDenyButton: true,
+      confirmButtonText: "Eliminar",
+      denyButtonText: `cancelar`
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        ListaArticulos.filter(p =>
+          p.id !== product.id
+        )
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Eliminado",
+          showConfirmButton: false,
+          timer: 1000
+        });
+      } else if (result.isDenied) {
+        Swal.fire({
+          position: "top-end",
+          icon: "info",
+          title: "Operacion cancelada",
+          showConfirmButton: false,
+          timer: 500
+        });
+      }
+    });
+  }
+
+  function CargarLosNuevosValoresDelDescuento(event) {
+    setDescuento(parseFloat(event.target.value) || 0);
+  }
+
+  function CargarLosNuevosValoresDeCantidad(event) {
+    setcantidad(event.target.value);
   }
 
   const [formulario, setformulario] = useState(true);
-  const [factura, setfactura] = useState(false);
-  const [productoID, setProductoID] = useState(0);
-  const [Producto, setProducto] = useState("");
   const [nombreCliente, setnombreCliente] = useState("");
-  const [descripcion, setdescripcion] = useState("");
-  const [cantidad, setcantidad] = useState(0);
   const [Precio, setPrecio] = useState(0);
   const [FechaEntrada, setfechaEntrada] = useState("");
   const [FechaSalida, setfechaSalida] = useState(new Date().toISOString().split('T')[0]);
-  const [Descuento, setDescuento] = useState(0);
+
   const [Descuentos, setDescuentos] = useState(0);
   const [Subtotal, setSubtotal] = useState(0);
   const [Total, setTotal] = useState(0);
-  const Swal = require('sweetalert2')
+  
   const [ListaProductos, setListaProductos] = useState([]);
 
 
-  function CargarLosNuevosValoresDeCantidad(event) {
-    setcantidad(parseFloat(event.target.value) || 0);
-  }
   function CargarLosNuevosValoresDeNombre(event) {
     setnombreCliente(event.target.value);
   }
@@ -118,21 +188,14 @@ function IngresoDeFacturas() {
   function CargarLosNuevosValoresDeFechaSalida(event) {
     setfechaSalida(event.target.value);
   }
-  function CargarLosNuevosValoresDelDescuento(event) {
-    setDescuento(parseFloat(event.target.value) || 0);
-  }
-
-
-
-
-
 
   function Limpiar() {
     setfechaEntrada("");
     setfechaSalida("");
     setnombreCliente("");
+    setcantidad('')
     setElementoSelecionado(valorInicial)
-
+    setSeleccion('')
   }
 
   function Imprimir() {
@@ -156,7 +219,6 @@ function IngresoDeFacturas() {
       setTotal(ttotal);
       setSubtotal(Subtotall);
       setDescuentos(Descuentos)
-      setfactura(true)
       setformulario(false)
     }
 
@@ -190,25 +252,27 @@ function IngresoDeFacturas() {
                 <label htmlFor="servicio">Servicio</label>
               </div>
 
-
               <span><strong>Nombre producto o servicio:</strong></span>
-              {seleccion === 'producto' ?
+              {seleccion === 'producto' ? (
                 <select onChange={AutoCompletarSeleccion}>
-                  <option >selecciona una opción</option>
+                  <option>selecciona una opción</option>
                   {Productos.map((list) => (
                     <option key={list.id}>{list.Nombre}</option>
                   ))}
-
                 </select>
-                :
+              ) : seleccion === 'servicio' ? (
                 <select onChange={AutoCompletarSeleccion}>
-                  <option >selecciona una opción</option>
+                  <option>selecciona una opción</option>
                   {Servicios.map((list) => (
                     <option key={list.id}>{list.Nombre}</option>
                   ))}
-
                 </select>
-              }
+              ) : (
+                <select >
+                  <option>selecciona una opción</option>
+                </select>
+              )}
+
 
 
 
@@ -236,6 +300,7 @@ function IngresoDeFacturas() {
 
                 <button className="btn1" onClick={Imprimir}>Imprimir</button>
                 <button className="btn2" onClick={Limpiar}>Limpiar</button>
+
               </div>
 
             </div>
@@ -247,11 +312,7 @@ function IngresoDeFacturas() {
               <li className='' key={product.id}>{product.Nombre}
 
                 <button className='btnB' onClick={() => {
-                  setListaArticulos(
-                    ListaArticulos.filter(p =>
-                      p.id !== product.id
-                    )
-                  );
+                  EliminarDeLista(product)
                 }} >Eliminar
                 </button>
 
