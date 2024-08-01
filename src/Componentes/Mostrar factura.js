@@ -2,8 +2,7 @@ import Logo from "../Assets/Logo.jpeg";
 import '../App.css';
 
 
-function MostrarFactura({Elemento}) {
-
+function MostrarFactura({FacturaFinal}) {
     return (
         <div className='factura'>
             <span className='parche'></span>
@@ -12,14 +11,14 @@ function MostrarFactura({Elemento}) {
             <h1>El tamarindo #2</h1>
 
             <div className='IngresosFT'>
-                <span><strong>Cliente: </strong>{Elemento.nombreCliente}</span>
+                <span><strong>Cliente: </strong>{FacturaFinal.NombreDeCliente}</span>
                 <span><strong>Producto/servicio:</strong></span>
                 <div className='Lista'>
-                    {Elemento.ListaProductos.map(product => (
+                    {FacturaFinal.ListaArticulos.map(product => (
 
-                        <div className='ListaContenido' key={product.productoID}>
+                        <div className='ListaContenido' key={product.id}>
                             <div >
-                                <div> -{product.nombre}  </div>
+                                <div> -{product.Nombre}  </div>
 
                                 <span>Cantidad:{product.cantidad}</span>
 
@@ -30,12 +29,12 @@ function MostrarFactura({Elemento}) {
                         </div>
                     ))}
                 </div>
-                <span>Descuentos:{Elemento.Descuentos}</span>
-                <span>Subtotal:{Elemento.Subtotal}</span>
-                <span>Total:{Elemento.Total}</span>
+                <span>Descuentos:{FacturaFinal.Descuentos}</span>
+                <span>Subtotal:{FacturaFinal.Subtotal}</span>
+                <span>Total:{FacturaFinal.Total}</span>
                 <span> </span>
-                <span><strong>Fecha de Entrada: </strong>{Elemento.FechaEntrada}</span>
-                <span><strong>Fecha de Salida: </strong>{Elemento.FechaSalida}</span>
+                <span><strong>Fecha de Entrada: </strong>{FacturaFinal.FechaEntrada}</span>
+                <span><strong>Fecha de Salida: </strong>{FacturaFinal.FechaSalida}</span>
                 <span>Gracias por hacer uso de nuestros servicios</span>
                 <span>Telefono: 2470 23-23</span>
                 <span>multiserviciostamarindo02@gmail.com</span>

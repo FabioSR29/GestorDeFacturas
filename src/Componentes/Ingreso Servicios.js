@@ -34,14 +34,15 @@ function Servicios() {
             try {
 
                 await addDoc(collection(db, 'Servicios'), { ...Servicios })
-
+                getLista()
             } catch (error) {
                 console.log(error)
             }
         } else {
-            await setDoc(doc(db,"Servicios",IdGuia),{
+            await setDoc(doc(db, "Servicios", IdGuia), {
                 ...Servicios
             })
+            getLista()
         }
 
         setServicios(valorInicial)
@@ -49,21 +50,18 @@ function Servicios() {
     }
 
 
-    useEffect(() => {
-        const getLista = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'Servicios'))
-                const docs = []
-                querySnapshot.forEach((doc) => {
-                    docs.push({ ...doc.data(), id: doc.id })
-                })
-                setLista(docs);
-            } catch (error) {
-                console.log(error)
-            }
+    const getLista = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'Servicios'))
+            const docs = []
+            querySnapshot.forEach((doc) => {
+                docs.push({ ...doc.data(), id: doc.id })
+            })
+            setLista(docs);
+        } catch (error) {
+            console.log(error)
         }
-        getLista()
-    }, [Lista])
+    }
 
     const DeleteService = async (id) => {
         await deleteDoc(doc(db, "Servicios", id))
@@ -97,14 +95,19 @@ function Servicios() {
                             <input type="number" name="precio" className="form-control mb-3" placeholder="Ingrese el precio" onChange={capturarInputs} value={Servicios.precio}></input>
                             <input type="date" name="fecha" className="form-control mb-3" placeholder="Ingrese la fecha de la compra" onChange={capturarInputs} value={Servicios.fecha}></input>
                         </div>
-                        <button className="btn btn-primary">{IdGuia==='' ? 'Guardar':'Actualizar'}</button>
+                        <button className="btn btn-primary">{IdGuia === '' ? 'Guardar' : 'Actualizar'}</button>
                     </div>
                 </form>
             </div>
 
             <div className="col-md-8">
                 <h1 className="text-center">Lista de servicios</h1>
+                {Lista.length !== 0 ? (
+                    <div>    </div>
+                ) :
+                    <button onClick={getLista} className="btn btn-primary m-5" >Cargar lista</button>
 
+                }
 
                 <div className="container card">
                     <div className="card-body">

@@ -35,7 +35,7 @@ function Productos() {
             try {
 
                 await addDoc(collection(db, 'Productos'), { ...Producto })
-
+                getLista()
             } catch (error) {
                 console.log(error)
             }
@@ -43,6 +43,7 @@ function Productos() {
             await setDoc(doc(db, "Productos", IdGuia), {
                 ...Producto
             })
+            getLista()
         }
 
         setProducto(valorInicial)
@@ -50,21 +51,22 @@ function Productos() {
     }
 
 
-    useEffect(() => {
-        const getLista = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'Productos'))
-                const docs = []
-                querySnapshot.forEach((doc) => {
-                    docs.push({ ...doc.data(), id: doc.id })
-                })
-                setLista(docs);
-            } catch (error) {
-                console.log(error)
-            }
+    const getLista = async () => {
+        try {
+
+
+            const querySnapshot = await getDocs(collection(db, 'Productos'))
+            const docs = []
+            querySnapshot.forEach((doc) => {
+                docs.push({ ...doc.data(), id: doc.id })
+            })
+            setLista(docs);
+
+
+        } catch (error) {
+            console.log(error)
         }
-        getLista()
-    }, [Lista])
+    }
 
     const DeleteProduct = async (id) => {
         console.log(id)
@@ -81,6 +83,7 @@ function Productos() {
             ObtengaElproducto(IdGuia);
         }
     }, [IdGuia])
+
     return (
 
 
@@ -105,7 +108,12 @@ function Productos() {
             <div className="col-md-8">
                 <h1 className="text-center">Lista de productos</h1>
 
+                {Lista.length !== 0 ? (
+                    <div>    </div>
+                ) :
+                    <button onClick={getLista} className="btn btn-primary m-5" >Cargar lista</button>
 
+                }
                 <div className="container card">
                     <div className="card-body">
                         {Lista.map((list) => (

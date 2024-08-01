@@ -1,8 +1,9 @@
 
 import '../App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import appFirebase from '../Credenciales'
 import { getAuth } from "firebase/auth";
+import MostrarFactura from './Mostrar factura';
 import { getFirestore, collection, addDoc, getDoc, doc, deleteDoc, getDocs, setDoc } from "firebase/firestore";
 
 
@@ -19,49 +20,68 @@ function IngresoDeFacturas() {
     precio: '',
     Descuento: ''
   }
+  const FacturaEstructura = {
+    NombreDeCliente: '',
+    FechaEntrada: '',
+    FechaSalida: '',
+    ListaArticulos: '',
+    Descuentos: '',
+    Subtotal: '',
+    Total: ''
+  }
   const Swal = require('sweetalert2')
+  const [formulario, setformulario] = useState(true);
+  const [mostrarFactura, setMostrarFactura] = useState(false);
+  const [nombreCliente, setnombreCliente] = useState("");
+  const [FechaEntrada, setfechaEntrada] = useState("");
+  const [FechaSalida, setfechaSalida] = useState(new Date().toISOString().split('T')[0]);
   const [Productos, setProductos] = useState([]);
   const [Servicios, setServicios] = useState([]);
   const [seleccion, setSeleccion] = useState('');
   const [ElementoSeleccionado, setElementoSelecionado] = useState(valorInicial);
+  const [FacturaFinal, setFacturaFinal] = useState(FacturaEstructura)
   const [ListaArticulos, setListaArticulos] = useState([]);
   const [cantidad, setcantidad] = useState(0);
   const [Descuento, setDescuento] = useState(0);
 
-  useEffect(() => {
-    const getLista = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'Productos'))
-        const docs = []
-        querySnapshot.forEach((doc) => {
-          docs.push({ ...doc.data(), id: doc.id })
-        })
-        setProductos(docs);
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getLista()
-  }, [Productos])
 
-  useEffect(() => {
-    const getLista = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'Servicios'))
-        const docs = []
-        querySnapshot.forEach((doc) => {
-          docs.push({ ...doc.data(), id: doc.id })
-        })
-        setServicios(docs);
-      } catch (error) {
-        console.log(error)
-      }
+  const getListaProductos = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'Productos'))
+      const docs = []
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id })
+      })
+      setProductos(docs);
+    } catch (error) {
+      console.log(error)
     }
-    getLista()
-  }, [Servicios])
+  }
+
+
+  const getListaServicios = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'Servicios'))
+      const docs = []
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id })
+      })
+      setServicios(docs);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const TipoSeleccionado = (event) => {
     setSeleccion(event.target.value)
+
+    if (event.target.value === "servicio") {
+      getListaServicios()
+    }
+    if (event.target.value === "producto") {
+      getListaProductos()
+    }
+
   };
 
 
@@ -77,7 +97,7 @@ function IngresoDeFacturas() {
           ...valorInicial,
           ...seleccionadoFiltrado(seleccionado)
         });
-        console.log(ElementoSeleccionado)
+
       } else {
         seleccionado = Servicios.find((s) => s.Nombre === nombre);
         setElementoSelecionado({
@@ -89,7 +109,7 @@ function IngresoDeFacturas() {
     }
   }
 
-  const seleccionadoFiltrado =(seleccionado)=> Object.keys(valorInicial).reduce((obj, key) => {
+  const seleccionadoFiltrado = (seleccionado) => Object.keys(valorInicial).reduce((obj, key) => {
     if (seleccionado.hasOwnProperty(key)) {
       obj[key] = seleccionado[key];
     }
@@ -103,7 +123,7 @@ function IngresoDeFacturas() {
       confirmButtonText: "Agregar",
       denyButtonText: `cancelar`
     }).then((result) => {
-     
+
       if (result.isConfirmed) {
         Swal.fire({
           position: "top-end",
@@ -113,25 +133,43 @@ function IngresoDeFacturas() {
           timer: 1000
         });
         ElementoSeleccionado.cantidad = cantidad;
-        ElementoSeleccionado.Descuento=Descuento;
+        ElementoSeleccionado.Descuento = Descuento;
+        ElementoSeleccionado.precio=ElementoSeleccionado.precio*cantidad;
         ListaArticulos.push(ElementoSeleccionado)
+
+        var Descuentos = 0;
+        var Subtotall = 0;
+
+        ListaArticulos.forEach(element => {
+          Descuentos += element.Descuento;
+          Subtotall += parseFloat(element.precio);
+        });
+
+        FacturaEstructura.NombreDeCliente = nombreCliente
+        FacturaEstructura.FechaEntrada = FechaEntrada
+        FacturaEstructura.FechaSalida = FechaSalida
+        FacturaEstructura.ListaArticulos = ListaArticulos
+        FacturaEstructura.Descuentos = Descuentos
+        FacturaEstructura.Subtotal = Subtotall
+        FacturaEstructura.Total = Subtotall - Descuentos
+        setFacturaFinal(FacturaEstructura)
         setElementoSelecionado(valorInicial)
         Limpiar()
       } else if (result.isDenied) {
         Swal.fire("Revisa los datos", "", "info");
       }
     });
-   
-  
+
+
   }
-  function EliminarDeLista(product){
+  function EliminarDeLista(product) {
     Swal.fire({
       title: "¿Seguro?",
       showDenyButton: true,
       confirmButtonText: "Eliminar",
       denyButtonText: `cancelar`
     }).then((result) => {
-     
+
       if (result.isConfirmed) {
         ListaArticulos.filter(p =>
           p.id !== product.id
@@ -163,25 +201,11 @@ function IngresoDeFacturas() {
     setcantidad(event.target.value);
   }
 
-  const [formulario, setformulario] = useState(true);
-  const [nombreCliente, setnombreCliente] = useState("");
-  const [Precio, setPrecio] = useState(0);
-  const [FechaEntrada, setfechaEntrada] = useState("");
-  const [FechaSalida, setfechaSalida] = useState(new Date().toISOString().split('T')[0]);
-
-  const [Descuentos, setDescuentos] = useState(0);
-  const [Subtotal, setSubtotal] = useState(0);
-  const [Total, setTotal] = useState(0);
-  
-  const [ListaProductos, setListaProductos] = useState([]);
-
 
   function CargarLosNuevosValoresDeNombre(event) {
     setnombreCliente(event.target.value);
   }
-  function CargarLosNuevosValoresDePrecio(event) {
-    setPrecio(parseFloat(event.target.value) || 0);
-  }
+
   function CargarLosNuevosValoresDeFechaEntrada(event) {
     setfechaEntrada(event.target.value);
   }
@@ -190,37 +214,27 @@ function IngresoDeFacturas() {
   }
 
   function Limpiar() {
-    setfechaEntrada("");
-    setfechaSalida("");
-    setnombreCliente("");
     setcantidad('')
     setElementoSelecionado(valorInicial)
     setSeleccion('')
   }
 
   function Imprimir() {
-    if (ListaProductos.length == 0) {
+    if (ListaArticulos.length == 0 || nombreCliente === "" || FechaEntrada === "") {
       Swal.fire({
         icon: "warning",
         title: "Revisa los datos",
-        text: "Debe agregar al menos un producto a la lista"
+        text: "Debe agregar al menos un producto a la lista. Revisa que la facutura tenga nombre y fechas!"
       });
     } else {
-      var Descuentos = 0;
-      var Subtotall = 0;
-      var ttotal = 0;
 
-      ListaProductos.forEach(element => {
-        Descuentos += element.Descuento;
-        ttotal += element.Total;
-        Subtotall += element.precio;
-      });
-
-      setTotal(ttotal);
-      setSubtotal(Subtotall);
-      setDescuentos(Descuentos)
       setformulario(false)
+      setMostrarFactura(true)
+      console.log(FacturaFinal)
     }
+
+
+
 
   }
 
@@ -233,7 +247,6 @@ function IngresoDeFacturas() {
             <h1>Ingrese los datos del Producto</h1>
 
             <div className="Ingresos">
-
               <h2>Datos del cliente</h2>
               <span><strong>Nombre del cliente:</strong></span>
               <input type='text' onChange={CargarLosNuevosValoresDeNombre} value={nombreCliente} required></input>
@@ -279,7 +292,7 @@ function IngresoDeFacturas() {
               <span><strong>Descripcion:</strong></span>
               <input type='text' onChange={AutoCompletarSeleccion} value={ElementoSeleccionado.descripcion} required></input>
               <span><strong>Precio:</strong></span>
-              <input type='number' onChange={CargarLosNuevosValoresDePrecio} value={ElementoSeleccionado.precio} required></input>
+              <input type='number' onChange={AutoCompletarSeleccion} value={ElementoSeleccionado.precio} required></input>
 
               {seleccion === 'producto' ?
                 <div >
@@ -295,7 +308,7 @@ function IngresoDeFacturas() {
 
               <span><strong>Descuento:</strong></span>
               <input type='number' onChange={CargarLosNuevosValoresDelDescuento} value={Descuento.toString()} ></input>
-              <button onClick={AgregarArticulos} className='btnAgregar'>+ Nuevo</button>
+              <button onClick={AgregarArticulos} className='btnAgregar'>+ Agregar</button>
               <div className="Botones">
 
                 <button className="btn1" onClick={Imprimir}>Imprimir</button>
@@ -322,7 +335,9 @@ function IngresoDeFacturas() {
         </div >
       }
 
-
+      {mostrarFactura &&
+        <MostrarFactura FacturaFinal={FacturaFinal}></MostrarFactura>
+      }
 
 
 

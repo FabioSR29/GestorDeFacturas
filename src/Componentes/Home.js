@@ -122,10 +122,10 @@ function Home({ correoUsuario }) {
             </div>
 
             <div className="row">
-                <div className="col-2">
+                <div className="col-1">
 
                 </div>
-                <div className="col-10">
+                <div className="col-11">
                     {EstadoFacturas &&
                         <Facturas></Facturas>
                     }
