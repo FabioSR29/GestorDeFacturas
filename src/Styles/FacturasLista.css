@@ -1,0 +1,57 @@
+.contenedorFacturas{
+margin: 80px;
+padding: 30px;
+display: flex;
+justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.factura{
+    margin-top: 80px;
+    margin-left: -170px;
+    
+  }
+  .facturaLista{
+    margin-top: 80px;
+    border: 1px solid black;
+  }
+  
+  .factura h1 {
+    font-size: small;
+    margin-left: 10px;
+  }
+  .IngresosFT {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+    margin-left: 5px;
+  
+  }
+  
+  .IngresosFT SPAN {
+    font-size: xx-small;
+  }
+  .Lista{
+    display: flex;
+    flex-direction: column;
+    font-size: xx-small;
+  }
+  .ListaContenido{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .parche{
+    background-color: white;
+    position: absolute;
+    width: 94%;
+    height: 155px;
+    left: 10px;
+    top: 1px;
+  }
+  .Sinparche{
+    background-color: rgba(255, 255, 255, 0);
+    width: 1px;
+  }

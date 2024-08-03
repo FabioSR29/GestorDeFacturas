@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import appFirebase from '../Credenciales'
-import { getAuth } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDoc, doc, deleteDoc, getDocs, setDoc } from "firebase/firestore";
 
 
-const auth = getAuth(appFirebase)
+
 const db = getFirestore(appFirebase)
 
 function Productos() {

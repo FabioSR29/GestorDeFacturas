@@ -1,9 +1,7 @@
 import { useState } from "react";
 import React from "react";
-import Swal from 'sweetalert2/dist/sweetalert2.js'
 import '../Styles/global.css'
 import '../Styles/login.css'
-
 import appFirebase from "../Credenciales";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 const auth = getAuth(appFirebase);

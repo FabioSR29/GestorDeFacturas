@@ -61,38 +61,9 @@ h1 {
   color: aliceblue;
   margin: 5PX;
 }
-.factura{
-  margin-top: 80px;
-  margin-left: -170px;
-}
 
-.factura h1 {
-  font-size: small;
-  margin-left: 10px;
-}
 
-.IngresosFT {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 30px;
-  margin-left: 5px;
 
-}
-
-.IngresosFT SPAN {
-  font-size: xx-small;
-}
-.Lista{
-  display: flex;
-  flex-direction: column;
-  font-size: xx-small;
-}
-.ListaContenido{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
 img{
   height: 110PX;
 }
@@ -109,14 +80,7 @@ img{
   border: 1px solid black;
 }
 
-.parche{
-  background-color: white;
-  position: absolute;
-  width: 94%;
-  height: 155px;
-  left: 10px;
-  top: 1px;
-}
+
 /*Fin btn cerrar sesion
 */
 .Btn {

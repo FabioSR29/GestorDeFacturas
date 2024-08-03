@@ -1,12 +1,12 @@
 import Logo from "../Assets/Logo.jpeg";
-import '../App.css';
+import '../Styles/FacturasLista.css';
 
 
-function MostrarFactura({FacturaFinal}) {
+function MostrarFactura({FacturaFinal,Lugar}) {
     return (
-        <div className='factura'>
-            <span className='parche'></span>
-            <img src={Logo}></img>
+        <div className={`${Lugar === 'Imprimir' ? 'factura' : 'facturaLista'}`}>
+            <span className={`${Lugar === 'Imprimir' ? 'parche' : 'sinparche'}`}></span>
+            <img src={Logo} alt="Logo de la empresa Tamarindo 2"></img>
             <h1>Multiservicios</h1>
             <h1>El tamarindo #2</h1>
 
@@ -30,8 +30,10 @@ function MostrarFactura({FacturaFinal}) {
                     ))}
                 </div>
                 <span>Descuentos:{FacturaFinal.Descuentos}</span>
+                <span>IVA:{FacturaFinal.IVA}</span>
                 <span>Subtotal:{FacturaFinal.Subtotal}</span>
-                <span>Total:{FacturaFinal.Total}</span>
+                <span>Total sin IVA:{FacturaFinal.Total}</span>
+                <span>Total:{FacturaFinal.Total+FacturaFinal.IVA}</span>
                 <span> </span>
                 <span><strong>Fecha de Entrada: </strong>{FacturaFinal.FechaEntrada}</span>
                 <span><strong>Fecha de Salida: </strong>{FacturaFinal.FechaSalida}</span>
