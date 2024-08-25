@@ -80,7 +80,7 @@ function IngresoDeFacturas() {
     try {
 
       await addDoc(collection(db, 'Facturas'), { ...FacturaFinal })
-   
+
     } catch (error) {
       console.log(error)
     }
@@ -107,14 +107,16 @@ function IngresoDeFacturas() {
       setElementoSelecionado(valorInicial)
     } else {
       if (seleccion === 'producto') {
-        seleccionado = Productos.find((p) => p.Nombre === nombre);
+        seleccionado = Productos.find((p) => (p.Nombre + " / " + p.descripcion) === nombre);
         setElementoSelecionado({
           ...valorInicial,
           ...seleccionadoFiltrado(seleccionado)
         });
 
       } else {
-        seleccionado = Servicios.find((s) => s.Nombre === nombre);
+
+        seleccionado = Servicios.find((s) => (s.Nombre + " / " + s.descripcion) === nombre);
+        console.log(seleccionado)
         setElementoSelecionado({
           ...valorInicial,
           ...seleccionadoFiltrado(seleccionado)
@@ -148,15 +150,17 @@ function IngresoDeFacturas() {
           timer: 1000
         });
         ElementoSeleccionado.cantidad = cantidad;
+        console.log(cantidad)
         ElementoSeleccionado.Descuento = Descuento;
         ElementoSeleccionado.precio = ElementoSeleccionado.precio * cantidad;
+        console.log(ElementoSeleccionado.precio)
         ListaArticulos.push(ElementoSeleccionado)
-console.log(ElementoSeleccionado)
+        console.log(ElementoSeleccionado)
         var Descuentos = 0;
         var Subtotall = 0;
 
         ListaArticulos.forEach(element => {
-          Descuentos += element.Descuento;
+          Descuentos += parseFloat(element.Descuento);
           Subtotall += parseFloat(element.precio);
         });
 
@@ -214,7 +218,7 @@ console.log(ElementoSeleccionado)
   }
 
   function CargarLosNuevosValoresDeCantidad(event) {
-    setcantidad(event.target.value);
+    setcantidad(parseFloat(event.target.value) || 0);
   }
 
 
@@ -231,7 +235,7 @@ console.log(ElementoSeleccionado)
 
   function Limpiar() {
     setcantidad(1)
-    setDescuento('')
+    setDescuento(0)
     setElementoSelecionado(valorInicial)
     setSeleccion('')
   }
@@ -307,14 +311,14 @@ console.log(ElementoSeleccionado)
                 <select onChange={AutoCompletarSeleccion}>
                   <option>selecciona una opción</option>
                   {Productos.map((list) => (
-                    <option key={list.id}>{list.Nombre}</option>
+                    <option key={list.id}>{list.Nombre} / {list.descripcion}</option>
                   ))}
                 </select>
               ) : seleccion === 'servicio' ? (
                 <select onChange={AutoCompletarSeleccion}>
                   <option>selecciona una opción</option>
                   {Servicios.map((list) => (
-                    <option key={list.id}>{list.Nombre}</option>
+                    <option key={list.id}>{list.Nombre} / {list.descripcion}</option>
                   ))}
                 </select>
               ) : (

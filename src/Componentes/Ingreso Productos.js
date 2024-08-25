@@ -68,8 +68,8 @@ function Productos() {
     }
 
     const DeleteProduct = async (id) => {
-        console.log(id)
         await deleteDoc(doc(db, "Productos", id))
+        getLista()
     }
     const ObtengaElproducto = async (id) => {
         const docRef = doc(db, "Productos", id)

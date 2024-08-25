@@ -25,8 +25,10 @@ function Servicios() {
 
     const capturarInputs = (e) => {
         const { name, value } = e.target;
-        setServicios({ ...Servicios, [name]: value })
-    }
+        const trimmedValue = value.trim();
+        setServicios({ ...Servicios, [name]: trimmedValue });
+    };
+    
 
     const guardarDatos = async (e) => {
         e.preventDefault();
@@ -65,6 +67,7 @@ function Servicios() {
 
     const DeleteService = async (id) => {
         await deleteDoc(doc(db, "Servicios", id))
+        getLista()
     }
 
     const ObtengaElservicio = async (id) => {

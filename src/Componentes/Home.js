@@ -76,7 +76,7 @@ function Home({ correoUsuario }) {
     }
     return (
 
-        <div className="">
+        <div className="Padre">
             <div className="row">
                 <div className="col-md-auto">
                     <div className="d-flex flex-row p-2">
