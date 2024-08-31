@@ -19,13 +19,13 @@ function MostrarFactura({ FacturaFinal, Lugar }) {
 
                             <div className='ListaContenido' key={product.id}>
                                 <div >
-                                    <div> -{product.Nombre}  </div>
+                                    <div> -<strong>{product.Nombre}</strong> </div>
 
                                     <span>Cantidad:{product.cantidad}</span>
 
 
                                 </div>
-                                <div>{product.precio} </div>
+                                <div><strong>{product.precio} </strong></div>
 
                             </div>
                         ))}
